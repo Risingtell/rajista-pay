@@ -40,7 +40,7 @@
     "naira"
   ],
   "dependencies": {
-    "@noble/hashes": "^1.8.0",
+    "@noble/hashes": "^2.4.0",
     "@solana/web3.js": "^1.98.4",
     "buffer": "^6.0.3"
   },
