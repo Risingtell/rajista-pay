@@ -1,5 +1,9 @@
 # Rajista Pay
 
+[![ci](https://github.com/Risingtell/rajista-pay/actions/workflows/ci.yml/badge.svg)](https://github.com/Risingtell/rajista-pay/actions/workflows/ci.yml)
+
+**[Try to break it in your browser](https://risingtell.github.io/rajista-pay/)**: attack the deployed program and watch it refuse. No wallet needed.
+
 **Take USDC at a shop till, on Solana.** A cashier rings up a sale in naira; the customer scans a QR and pays the exact amount in USDC from their own wallet. An on-chain program makes sure the money can only go to the shop owner's wallet, only once, and only for the agreed price.
 
 Rajista Pay is the open-source payment layer of [Rajista](https://rajista-www.rajista.workers.dev), a point-of-sale app for small Nigerian shops. This repo is the Solana program, a TypeScript SDK, and a `verify` command that rebuilds any shop's takings from the chain.
@@ -95,6 +99,7 @@ The client is written by hand, without the Anchor TypeScript client, so a till r
 | [`tests`](tests/till.test.ts) | 19 program tests in LiteSVM, named after the rule each one defends |
 | [`sdk`](sdk) | TypeScript SDK and the `rajista-pay` CLI (`verify`, `quote`) |
 | [`sdk/scripts/devnet-smoke.mjs`](sdk/scripts/devnet-smoke.mjs) | The full flow plus the four attacks, against devnet; writes [`proof/devnet.json`](proof/devnet.json) |
+| [`demo`](demo/main.ts), [`docs`](docs/index.html) | The "try to break it" page: each attack is simulated against devnet from the visitor's browser. Rebuild with `NODE_PATH=sdk/node_modules npx esbuild demo/main.ts --bundle --minify --format=esm --platform=browser --outfile=docs/app.js` |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Builds the program and runs both test suites on every push |
 
 ## Run the tests

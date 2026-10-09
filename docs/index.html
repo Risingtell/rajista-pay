@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rajista Pay: try to break it</title>
+<meta name="description" content="USDC at a shop till, on Solana. Attack the real devnet program from your browser and watch it refuse. No wallet needed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brand: #3a34a8; --brand-dark: #17153f; --ink: #12112a; --paper: #f5f4fb; --white: #fff;
+  --line: #d9d7ee; --muted: #5d5b78; --green: #0f7a3a; --green-bg: #e7f6ec; --red: #b4232c; --red-bg: #fbeaeb; --amber: #8a5a00; --amber-bg: #fdf3dc;
+  --pad: clamp(16px, 4vw, 48px);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; max-width: 100%; overflow-x: hidden; }
+body { font-family: "Space Grotesk", system-ui, sans-serif; color: var(--ink); background: var(--white); line-height: 1.55; font-size: 17px; }
+code, pre, .mono, td, th, a { overflow-wrap: anywhere; }
+code, pre, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+a { color: var(--brand); }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 var(--pad); }
+.band { padding: clamp(48px, 8vw, 104px) 0; border-top: 1px solid var(--line); }
+.band.dark { background: var(--brand-dark); color: #eceaff; border-top-color: #2b2870; }
+.band.paper { background: var(--paper); }
+.eyebrow { font: 600 12px/1 "JetBrains Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--brand); margin: 0 0 18px; }
+.dark .eyebrow { color: #b7b2ff; }
+h1, h2 { text-transform: uppercase; letter-spacing: -.01em; line-height: .95; margin: 0 0 24px; }
+h1 { font-size: clamp(44px, 8.5vw, 116px); }
+h2 { font-size: clamp(32px, 5vw, 64px); }
+.lede { font-size: clamp(18px, 2vw, 22px); max-width: 760px; margin: 0 0 28px; }
+.dark .lede { color: #d6d3ff; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 28px; }
+.tag { font: 600 11px/1 "JetBrains Mono", monospace; letter-spacing: .12em; text-transform: uppercase; padding: 7px 9px; border: 1px solid currentColor; }
+.tag.live { color: #6fe0a0; } .tag.amber { color: #ffcf73; } .tag.plain { color: #b7b2ff; }
+.btns { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-block; padding: 14px 20px; border: 2px solid currentColor; color: inherit; text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-size: 14px; background: transparent; cursor: pointer; font-family: inherit; }
+.btn.solid { background: #fff; color: var(--brand-dark); border-color: #fff; }
+.btn:hover { background: #fff; color: var(--brand-dark); }
+.btn.ink { color: var(--ink); } .btn.ink:hover { background: var(--ink); color: #fff; }
+.btn:disabled { opacity: .5; cursor: wait; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.grid2 > * { background: var(--white); padding: clamp(18px, 2.5vw, 32px); }
+.billcard { font-family: "JetBrains Mono", monospace; font-size: 14px; }
+.billcard .row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.billcard .row span:first-child { color: var(--muted); }
+.attacks { display: grid; gap: 1px; background: var(--line); margin-top: 18px; }
+.attack { display: grid; grid-template-columns: 44px 1fr; text-align: left; gap: 2px 12px; padding: 14px 16px; background: var(--white); border: 0; cursor: pointer; font-family: inherit; color: var(--ink); }
+.attack .n { grid-row: span 2; font: 700 22px/1 "JetBrains Mono", monospace; color: var(--brand); padding-top: 2px; }
+.attack .t { font-weight: 700; font-size: 16px; }
+.attack .w { font-size: 14px; color: var(--muted); }
+.attack:hover, .attack.on { background: #eeedfa; }
+.verdict { padding: 22px; border: 2px solid var(--line); }
+#verdict { min-height: 200px; }
+.verdict .tag { display: inline-block; margin-bottom: 14px; border: 0; padding: 0; }
+.verdict .big { font: 700 clamp(24px, 3.4vw, 40px)/1.05 "JetBrains Mono", monospace; margin-bottom: 10px; }
+.verdict pre { background: #0f0e24; color: #cfcbff; padding: 14px; font-size: 12.5px; overflow-x: auto; white-space: pre-wrap; margin: 12px 0; }
+.verdict.no { border-color: var(--red); background: var(--red-bg); } .verdict.no .tag, .verdict.no .big { color: var(--red); }
+.verdict.yes { border-color: var(--green); background: var(--green-bg); } .verdict.yes .tag, .verdict.yes .big { color: var(--green); }
+.verdict.wait { border-color: var(--amber); background: var(--amber-bg); } .verdict.wait .tag { color: var(--amber); }
+.verdict .link { font-weight: 700; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: #2b2870; border: 1px solid #2b2870; }
+.steps > div { background: var(--brand-dark); padding: 24px; }
+.steps .n { font: 700 32px/1 "JetBrains Mono", monospace; color: #b7b2ff; }
+.steps h3 { margin: 12px 0 6px; font-size: 19px; }
+.steps p { margin: 0 0 12px; color: #c9c5f3; font-size: 15px; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { font: 600 11px/1 "JetBrains Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+td { font-family: "JetBrains Mono", monospace; }
+.sums { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 16px; }
+.sums > div { background: var(--white); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.muted { color: var(--muted); }
+.rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.rules > div { background: var(--white); padding: 20px 22px; }
+.rules b { display: block; font-size: 19px; margin-bottom: 4px; }
+footer { background: var(--ink); color: #b9b7d6; padding: 40px 0; font-size: 15px; }
+footer a { color: #fff; }
+@media (max-width: 900px) { .grid2, .steps { grid-template-columns: 1fr; } .rules { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { body { font-size: 16px; } .sums { grid-template-columns: 1fr; } .btn { padding: 12px 14px; } .attack { grid-template-columns: 34px 1fr; padding: 12px; } }
+</style>
+</head>
+<body>
+
+<section class="band dark" style="border-top:0">
+  <div class="wrap">
+    <p class="eyebrow">Rajista Pay · open source · Solana</p>
+    <h1>USDC at the till.<br>Try to break it.</h1>
+    <p class="lede">A Nigerian shop rings up a sale in naira; the customer pays the exact amount in USDC from their own wallet. A Solana program makes sure the money goes to the owner's wallet only, once, for the agreed price. Below, you attack that program yourself.</p>
+    <div class="tags">
+      <span class="tag live">Program: live on devnet</span>
+      <span class="tag live">In Rajista's till: live, switched on per shop</span>
+      <span class="tag amber">Mainnet: not yet</span>
+      <span class="tag plain">No wallet needed on this page</span>
+    </div>
+    <div class="btns">
+      <a class="btn solid" href="#break">Try to break it</a>
+      <a class="btn" href="https://github.com/Risingtell/rajista-pay">Source on GitHub</a>
+      <a class="btn" href="https://github.com/Risingtell/rajista-pay/blob/main/JUDGE-QUICKSTART.md">Judge quickstart</a>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="break">
+  <div class="wrap">
+    <p class="eyebrow">01 · Live against devnet</p>
+    <h2>Pick an attack</h2>
+    <p class="lede">Each button builds a real transaction and asks Solana devnet to simulate it against the <a id="program-link" href="#">deployed program</a>. A simulation runs the actual program on the actual accounts but moves nothing, so what comes back is the program's own answer. No wallet, no signature, no cost.</p>
+    <div class="grid2">
+      <div>
+        <div class="billcard">
+          <p class="eyebrow" style="margin-bottom:8px">The demo shop on devnet</p>
+          <div class="row"><span>Shop</span><a id="shop-link" class="mono" href="#">A9TEyd...9k72</a></div>
+          <div class="row"><span>Each sale</span><span>₦1,500.00</span></div>
+          <div class="row"><span>In USDC</span><span>about 1.10, at the day's rate</span></div>
+          <div class="row"><span>Pays to</span><span>owner's wallet only</span></div>
+        </div>
+        <div class="attacks" id="attacks"></div>
+      </div>
+      <div>
+        <div class="verdict" id="verdict">
+          <div class="tag" style="color:var(--muted)">WAITING</div>
+          <div class="big" style="color:var(--muted)">Pick an attack on the left.</div>
+          <p class="muted">The answer comes straight from devnet, usually in a second or two. The public devnet endpoint limits how often one visitor may ask, so if it is busy, wait a moment and try again.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band paper">
+  <div class="wrap">
+    <p class="eyebrow">02 · Don't trust us, rebuild it</p>
+    <h2>The shop's takings, from the chain</h2>
+    <p class="lede">The program keeps a running total on each shop's account, and every payment also writes a <code>BillPaid</code> event. This reads both straight from devnet in your browser and checks they agree. It is the same code as <code>rajista-pay verify</code>.</p>
+    <button class="btn ink" id="verify-btn">Rebuild the demo shop's takings</button>
+    <div id="verify-out" style="margin-top:20px"></div>
+  </div>
+</section>
+
+<section class="band dark">
+  <div class="wrap">
+    <p class="eyebrow">03 · How a sale works</p>
+    <h2>Six steps, one rule</h2>
+    <div class="steps">
+      <div><div class="n">01</div><h3>Ring it up in naira</h3><p>The cashier sells as usual in Rajista and taps USDC.</p><span class="tag live">Live in Rajista</span></div>
+      <div><div class="n">02</div><h3>Price it</h3><p>Naira per USDC from the Quidax USDT/NGN market, corrected by Pyth's USDC and USDT prices on Solana.</p><span class="tag live">Live</span></div>
+      <div><div class="n">03</div><h3>Post the bill</h3><p>The till signs a bill with its own key. The program checks the till is one the owner allowed and the USDC matches the naira price.</p><span class="tag live">Live on devnet</span></div>
+      <div><div class="n">04</div><h3>Scan and pay</h3><p>The customer scans a Solana Pay QR with Phantom or any wallet. Rajista pays the network fee; the customer needs USDC only.</p><span class="tag live">Live on devnet</span></div>
+      <div><div class="n">05</div><h3>Money to the owner</h3><p>The program moves exactly the bill's USDC into the owner's wallet, once, before the bill runs out.</p><span class="tag live">Live on devnet</span></div>
+      <div><div class="n">06</div><h3>Read back, then record</h3><p>The till reads the paid bill from Solana and only then records the sale, with the transaction on the receipt.</p><span class="tag live">Live in Rajista</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">04 · What the program refuses</p>
+    <h2>The rule</h2>
+    <div class="rules">
+      <div><b>Once</b>A paid bill can never be paid again.</div>
+      <div><b>Exactly</b>The USDC must equal the naira price at the recorded rate, rounded up.</div>
+      <div><b>USDC only</b>A shop takes USDC; any other token is refused.</div>
+      <div><b>To the owner</b>Only into the payout the owner's own wallet set. A cashier cannot swap in theirs.</div>
+      <div><b>On time</b>A bill lasts at most 15 minutes, because its rate goes stale.</div>
+      <div><b>Allowed tills</b>Only a till the owner registered can post a bill. Only the owner can change the payout.</div>
+    </div>
+    <p class="muted" style="margin-top:20px">Each rule has a test named after it, run on every push: 19 program tests in LiteSVM and 12 SDK tests. See the <a href="https://github.com/Risingtell/rajista-pay/actions">CI runs</a>.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Rajista Pay is the open-source payment layer of <a href="https://rajista-www.rajista.workers.dev">Rajista</a>, a point-of-sale app for small Nigerian shops, built in Kano by Rising Technology. MIT licence. <a href="https://github.com/Risingtell/rajista-pay">github.com/Risingtell/rajista-pay</a>
+  </div>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
