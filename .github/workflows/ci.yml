@@ -1,0 +1,53 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sdk:
+    name: SDK (unit tests, typecheck)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdk
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: sdk/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+
+  program:
+    name: Program (build, then run every rule in LiteSVM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cache/solana
+            target
+          key: sbf-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'programs/**/Cargo.toml') }}
+      - name: Install the Solana CLI
+        run: |
+          sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
+          echo "$HOME/.local/share/solana/install/active_release/bin" >> "$GITHUB_PATH"
+      - name: Build the program
+        run: cargo build-sbf --manifest-path programs/till/Cargo.toml
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install SDK and test dependencies
+        run: |
+          (cd sdk && npm ci)
+          (cd tests && npm ci)
+      - name: Run the program tests
+        working-directory: tests
+        run: npm test

@@ -1,0 +1,24 @@
+# build output
+target/
+!target/idl/
+!target/types/
+node_modules/
+dist/
+.anchor/
+test-ledger/
+
+# secrets: program and wallet keypairs, env files
+*-keypair.json
+keys/
+.env
+.env.*
+!.env.example
+
+# internal working documents, never public
+SUBMISSION.md
+PITCH_SCRIPT.md
+DEMO_SCRIPT.md
+VIDEO_SCRIPT.md
+PLAN.md
+notes/
+*.tgz

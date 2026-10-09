@@ -1,0 +1,76 @@
+{
+  "runs": [
+    {
+      "at": "2026-10-04T15:41:51.889Z",
+      "cluster": "devnet",
+      "program": "4y78XTmZk9GERsxhP4ezpnfuqX2iZh3Dq3aKZYk3XtQq",
+      "shop": "A9TEydWP1zqLKEf57rqmrGR4M5HZGa6QL3EEgUWh9k72",
+      "payout": "CSKLzSzVr7mRSmJWQwEExzWbAdYnGKeDJK9rwCfosauh",
+      "steps": [
+        {
+          "step": "post_bill",
+          "signature": "2D24X1JaQPF4xyTjm4RuKaQx5L9P3eZ2iGfetcuYRihBkLPko2oyutEmmoFpkoBvvC1MhHRKFXWFtxd1hudF5WXc",
+          "explorer": "https://explorer.solana.com/tx/2D24X1JaQPF4xyTjm4RuKaQx5L9P3eZ2iGfetcuYRihBkLPko2oyutEmmoFpkoBvvC1MhHRKFXWFtxd1hudF5WXc?cluster=devnet",
+          "error": null,
+          "sale": "01M43S6ZRNZDRF1N2S39V69FJS",
+          "naira": 1500,
+          "usdc": "1.102958",
+          "rate": 1359.98
+        },
+        {
+          "step": "pay_bill",
+          "signature": "2fFmDHAPqbhaN1VA5gDyfCN2v25JuwWVwtjN3JzoGeQ9NZAf3ga85r726YgXvnb3GLjhyZvkwW37ZrvaZeLHYyUK",
+          "explorer": "https://explorer.solana.com/tx/2fFmDHAPqbhaN1VA5gDyfCN2v25JuwWVwtjN3JzoGeQ9NZAf3ga85r726YgXvnb3GLjhyZvkwW37ZrvaZeLHYyUK?cluster=devnet",
+          "error": null
+        },
+        {
+          "step": "attack: pay the same bill twice",
+          "signature": "5C3MLd5SpSeMwtWkRJnK1FFgE9rGtKLiLZE2zzL81u8w6vrqkACp2htEcjrnD61GkvvUDMzN52qQq8KiqojrMS3T",
+          "explorer": "https://explorer.solana.com/tx/5C3MLd5SpSeMwtWkRJnK1FFgE9rGtKLiLZE2zzL81u8w6vrqkACp2htEcjrnD61GkvvUDMzN52qQq8KiqojrMS3T?cluster=devnet",
+          "error": "BillAlreadyPaid",
+          "expect": "BillAlreadyPaid"
+        },
+        {
+          "step": "post_bill (for the redirect attempt)",
+          "signature": "3qSBCXid13N6FcyAbaiEKAoqoZMSCbByog5eG6wa3yje393t3pH9HY9DUT9REkuYX9KhC8anbdPr61wjrRMfsJin",
+          "explorer": "https://explorer.solana.com/tx/3qSBCXid13N6FcyAbaiEKAoqoZMSCbByog5eG6wa3yje393t3pH9HY9DUT9REkuYX9KhC8anbdPr61wjrRMfsJin?cluster=devnet",
+          "error": null
+        },
+        {
+          "step": "attack: send the payment to the cashier's own account",
+          "signature": "2DssHJDBYD5fVUEWSV39AzcLgHsgHfdFyakrQvmcuhcTKw5CdwXyepptHE5L5ky3mzwBFiC98jFRZfCzLqm8xQpb",
+          "explorer": "https://explorer.solana.com/tx/2DssHJDBYD5fVUEWSV39AzcLgHsgHfdFyakrQvmcuhcTKw5CdwXyepptHE5L5ky3mzwBFiC98jFRZfCzLqm8xQpb?cluster=devnet",
+          "error": "WrongPayout",
+          "expect": "WrongPayout"
+        },
+        {
+          "step": "post_bill (2-second expiry)",
+          "signature": "4pHEjptCFkuuZjqfRPNtBoKAaUx18Hx1jeZXcjtbQFYrFt1CxFvKVp1SsXAahtJHarydUBMB5omuYT4VYqEMWiXG",
+          "explorer": "https://explorer.solana.com/tx/4pHEjptCFkuuZjqfRPNtBoKAaUx18Hx1jeZXcjtbQFYrFt1CxFvKVp1SsXAahtJHarydUBMB5omuYT4VYqEMWiXG?cluster=devnet",
+          "error": null
+        },
+        {
+          "step": "attack: pay after the bill expired",
+          "signature": "2KA1jL1A41VPcySRXVZc5fFL76zaLk96HZFkQ7KxBri5KeKxnNcTYsW5pHmtUAEHj3zBwP6wvCDk9Ne6ynUFoMEM",
+          "explorer": "https://explorer.solana.com/tx/2KA1jL1A41VPcySRXVZc5fFL76zaLk96HZFkQ7KxBri5KeKxnNcTYsW5pHmtUAEHj3zBwP6wvCDk9Ne6ynUFoMEM?cluster=devnet",
+          "error": "BillExpired",
+          "expect": "BillExpired"
+        },
+        {
+          "step": "attack: post a bill from a till the owner never registered",
+          "signature": "3qmvgf2BidzwQCS4D6WW5vtoSr2UET3bwWtxng2brbNvdphSeESxa4VQhETSCLoNbrxVqmRMYgs2TUB5Fh8pvD8j",
+          "explorer": "https://explorer.solana.com/tx/3qmvgf2BidzwQCS4D6WW5vtoSr2UET3bwWtxng2brbNvdphSeESxa4VQhETSCLoNbrxVqmRMYgs2TUB5Fh8pvD8j?cluster=devnet",
+          "error": "TillNotRegistered",
+          "expect": "TillNotRegistered"
+        }
+      ],
+      "verify": {
+        "matches": true,
+        "billsPaid": "2",
+        "totalUsdc": "2.205981",
+        "historyBills": 2,
+        "historyUsdc": "2.205981"
+      }
+    }
+  ]
+}
