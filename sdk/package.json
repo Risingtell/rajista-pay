@@ -13,7 +13,7 @@
     }
   },
   "bin": {
-    "rajista-pay": "./dist/cli.js"
+    "rajista-pay": "dist/cli.js"
   },
   "files": [
     "dist",

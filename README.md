@@ -1,6 +1,6 @@
 # Rajista Pay
 
-[![ci](https://github.com/Risingtell/rajista-pay/actions/workflows/ci.yml/badge.svg)](https://github.com/Risingtell/rajista-pay/actions/workflows/ci.yml)
+[![ci](https://github.com/Risingtell/rajista-pay/actions/workflows/ci.yml/badge.svg)](https://github.com/Risingtell/rajista-pay/actions/workflows/ci.yml) [![npm](https://img.shields.io/npm/v/rajista-pay)](https://www.npmjs.com/package/rajista-pay)
 
 **[Try to break it in your browser](https://risingtell.github.io/rajista-pay/)**: attack the deployed program and watch it refuse. No wallet needed.
 
@@ -54,6 +54,15 @@ The tests also cover a non-USDC mint, another token from the customer, a removed
 ## Check it yourself
 
 You need Node 20 or newer. Nothing else: no wallet, no key, no sign-up.
+
+The quickest way, straight from npm:
+
+```bash
+npx rajista-pay verify A9TEydWP1zqLKEf57rqmrGR4M5HZGa6QL3EEgUWh9k72 --cluster devnet
+npx rajista-pay quote
+```
+
+Or from the source:
 
 ```bash
 git clone https://github.com/Risingtell/rajista-pay.git
