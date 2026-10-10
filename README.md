@@ -6,7 +6,7 @@
 
 **Take USDC at a shop till, on Solana.** A cashier rings up a sale in naira; the customer scans a QR and pays the exact amount in USDC from their own wallet. An on-chain program makes sure the money can only go to the shop owner's wallet, only once, and only for the agreed price.
 
-Rajista Pay is the open-source payment layer of [Rajista](https://rajista-www.rajista.workers.dev), a point-of-sale app for small Nigerian shops. This repo is the Solana program, a TypeScript SDK, and a `verify` command that rebuilds any shop's takings from the chain.
+Rajista Pay is the open-source payment layer of [Rajista](https://rajista.com), a point-of-sale app for small Nigerian shops. This repo is the Solana program, a TypeScript SDK, and a `verify` command that rebuilds any shop's takings from the chain.
 
 > **Status: DEVNET.** The program runs on Solana devnet with test USDC. Mainnet is the next step. Every link below is a real devnet transaction you can open.
 
