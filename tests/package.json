@@ -11,7 +11,7 @@
     "@solana/spl-token": "^0.4.13",
     "@solana/web3.js": "^1.98.4",
     "buffer": "^6.0.3",
-    "litesvm": "^1.5.0",
+    "litesvm": "^1.6.0",
     "vitest": "^3.2.0"
   }
 }
